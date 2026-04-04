@@ -1,9 +1,10 @@
+import { lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppRoutes } from '../types/app.definitions';
 import { AppLayout } from '../features/shared/layouts/AppLayout';
 
 // Placeholder standard pages
-const HomeView = () => <div className="p-4"><p>Home - Plant Grid</p></div>;
+const HomeView = lazy(() => import('../features/plants/modules/dashboard'));
 const LoginView = () => <div className="p-4"><p>Login Page</p></div>;
 const RegisterView = () => <div className="p-4"><p>Register Page</p></div>;
 const AddPlantView = () => <div className="p-4"><p>Add Plant Form</p></div>;
