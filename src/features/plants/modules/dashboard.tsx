@@ -1,9 +1,23 @@
+import { useState } from "react";
 import { Plus, Sprout } from "lucide-react";
-import { mockedPlants } from "../../../mocks/plantMocks";
+import { usePlantStore } from "../../../store/usePlantStore";
 import PlantCard from "../components/PlantCard";
+import PlantForm from "../components/PlantForm";
 
 export const Dashboard = () => {
-    const plants = mockedPlants;
+    const plants = usePlantStore((state) => state.plants);
+    const [isAdding, setIsAdding] = useState(false);
+
+    if (isAdding) {
+        return (
+            <div className="flex flex-col items-center w-full min-h-[calc(100vh-200px)] py-4">
+                <PlantForm 
+                    onSuccess={() => setIsAdding(false)} 
+                    onCancel={() => setIsAdding(false)} 
+                />
+            </div>
+        );
+    }
 
     if (plants.length === 0) {
         return (
@@ -15,7 +29,10 @@ export const Dashboard = () => {
                 </div>
                 <h2 className="text-forest-deep-500 text-2xl font-bold">Comienza tu jardín digital</h2>
                 <p className="text-center text-zinc-600 text-base">Aun no tienes plantas registradas, añade tu primera planta y recibe recordatorios de riego personalizados</p>
-                <button className="flex flex-col gap-2 size-48 items-center justify-center rounded-full aspect-square p-4 bg-linear-to-br from-clover-bright-500 via-mountain-meadow-500 to-caribean-green-500 transition-all duration-300 ease-out shadow-2xl shadow-caribean-green-500/50 hover:scale-105 hover:brightness-90 hover:shadow-xl cursor-pointer">
+                <button 
+                    onClick={() => setIsAdding(true)}
+                    className="flex flex-col gap-2 size-48 items-center justify-center rounded-full aspect-square p-4 bg-linear-to-br from-clover-bright-500 via-mountain-meadow-500 to-caribean-green-500 transition-all duration-300 ease-out shadow-2xl shadow-caribean-green-500/50 hover:scale-105 hover:brightness-90 hover:shadow-xl cursor-pointer"
+                >
                     <Plus className="size-20 text-white" />
                     <span className="text-white text-xl">Añadir planta</span>
                 </button>
@@ -30,7 +47,10 @@ export const Dashboard = () => {
                     <h2 className="text-forest-deep-500 text-2xl font-bold">Tu Jardín</h2>
                     <p className="text-zinc-600 text-base">Tienes {plants.length} floridas {plants.length === 1 ? 'planta' : 'plantas'}</p>
                 </div>
-                <button className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-linear-to-br from-clover-bright-500 via-mountain-meadow-500 to-caribean-green-500 text-white transition-all duration-300 hover:scale-105 hover:brightness-90 hover:shadow-md cursor-pointer font-medium">
+                <button 
+                    onClick={() => setIsAdding(true)}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-linear-to-br from-clover-bright-500 via-mountain-meadow-500 to-caribean-green-500 text-white transition-all duration-300 hover:scale-105 hover:brightness-90 hover:shadow-md cursor-pointer font-medium"
+                >
                     <Plus className="size-5 text-white" />
                     <span>Añadir planta</span>
                 </button>

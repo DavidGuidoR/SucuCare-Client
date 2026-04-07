@@ -9,7 +9,7 @@ export interface Plant {
   location: Ubication;
   health: HealthStatus;
   image_url?: string;
-  last_watered_at: number; // timestamp
-  is_local?: boolean; // Flag for local storage vs fully synced
+  last_watered_at: number;
+  is_local?: boolean;
   created_at: number;
 }
