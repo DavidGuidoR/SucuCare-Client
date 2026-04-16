@@ -1,21 +1,23 @@
 import React, { useState, useRef } from 'react';
 import { Leaf, ImageIcon } from 'lucide-react';
-import { usePlantStore } from '../../../store/usePlantStore';
+import { usePlants } from '../hooks/usePlants';
 import type { Plant, Ubication } from '../types';
 
 interface PlantFormProps {
+  initialData?: Plant;
+  isEditing?: boolean;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
 
-export const PlantForm: React.FC<PlantFormProps> = ({ onSuccess, onCancel }) => {
-  const addPlant = usePlantStore((state) => state.addPlant);
+export const PlantForm: React.FC<PlantFormProps> = ({ initialData, isEditing, onSuccess, onCancel }) => {
+  const { addPlant, editPlant } = usePlants();
 
-  const [name, setName] = useState('');
-  const [species, setSpecies] = useState('');
-  const [category, setCategory] = useState<Ubication | ''>('');
-  const [wateringFrequency, setWateringFrequency] = useState('');
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [name, setName] = useState(initialData?.name || '');
+  const [species, setSpecies] = useState(initialData?.scientific_name || '');
+  const [category, setCategory] = useState<Ubication | ''>(initialData?.location || '');
+  const [wateringFrequency, setWateringFrequency] = useState(initialData?.watering_frequency_days?.toString() || '');
+  const [imagePreview, setImagePreview] = useState<string | null>(initialData?.image_url || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const triggerFileInput = () => {
@@ -38,20 +40,29 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSuccess, onCancel }) => 
 
     if (!name || !species || !category || !wateringFrequency) return;
 
-    const newPlant: Plant = {
-      id: crypto.randomUUID(),
-      name,
-      scientific_name: species,
-      location: category as Ubication,
-      health: 'GOOD',
-      watering_frequency_days: Number(wateringFrequency),
-      last_watered_at: Date.now(),
-      created_at: Date.now(),
-      is_local: true,
-      image_url: imagePreview || 'https://images.unsplash.com/photo-1416879598553-92f7596541f5?q=80&w=400&h=400&auto=format&fit=crop',
-    };
-
-    addPlant(newPlant);
+    if (isEditing && initialData) {
+      editPlant(initialData.id, {
+        name,
+        scientific_name: species,
+        location: category as Ubication,
+        watering_frequency_days: Number(wateringFrequency),
+        image_url: imagePreview || initialData.image_url,
+      });
+    } else {
+      const newPlant: Plant = {
+        id: crypto.randomUUID(),
+        name,
+        scientific_name: species,
+        location: category as Ubication,
+        health: 'GOOD',
+        watering_frequency_days: Number(wateringFrequency),
+        last_watered_at: Date.now(),
+        created_at: Date.now(),
+        is_local: true,
+        image_url: imagePreview || 'https://images.unsplash.com/photo-1416879598553-92f7596541f5?q=80&w=400&h=400&auto=format&fit=crop',
+      };
+      addPlant(newPlant);
+    }
     if (onSuccess) onSuccess();
   };
 
@@ -60,10 +71,12 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSuccess, onCancel }) => 
       <header className="mb-8">
         <h2 className="flex items-center gap-2 text-xl font-bold text-stone-900 mb-2">
           <Leaf className="text-mountain-meadow-500 size-6" />
-          Registrar Nueva Planta
+          {isEditing ? 'Editar Planta' : 'Registrar Nueva Planta'}
         </h2>
         <p className="text-stone-500 text-sm">
-          Completa el formulario para agregar una nueva planta a tu colección
+          {isEditing 
+            ? 'Modifica los detalles de tu planta'
+            : 'Completa el formulario para agregar una nueva planta a tu colección'}
         </p>
       </header>
 
@@ -146,9 +159,9 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSuccess, onCancel }) => 
                 onChange={(e) => setCategory(e.target.value as Ubication)}
               >
                 <option value="" disabled>Selecciona una categoría</option>
-                <option value="INDOOR">Interior</option>
-                <option value="OUTDOOR">Exterior</option>
-                <option value="PARTIAL_SHADE">Sombra Parcial</option>
+                <option value="INTERIOR">Interior</option>
+                <option value="EXTERIOR">Exterior</option>
+                <option value="SEMI_SOMBRA">Sombra Parcial</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-400">
                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -189,7 +202,7 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSuccess, onCancel }) => 
               className="flex-1 bg-stone-950 hover:bg-stone-900 text-white rounded-xl py-3.5 px-6 font-bold flex items-center justify-center gap-2 transition-colors"
           >
             <Leaf className="size-5" />
-            Registrar Planta
+            {isEditing ? 'Guardar Cambios' : 'Registrar Planta'}
           </button>
         </div>
       </form>
