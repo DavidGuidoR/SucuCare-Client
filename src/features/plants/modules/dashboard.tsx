@@ -9,7 +9,7 @@ import type { Plant } from "../types";
 
 export const Dashboard = () => {
     const plants = usePlantStore((state) => state.plants);
-    const { removePlant } = usePlants();
+    const { removePlant, waterPlant } = usePlants();
 
     const [isAdding, setIsAdding] = useState(false);
     const [plantToEdit, setPlantToEdit] = useState<Plant | null>(null);
@@ -89,6 +89,7 @@ export const Dashboard = () => {
                         {...plant} 
                         onEdit={handleEdit}
                         onDelete={handleDeleteClick}
+                        onWater={waterPlant}
                     />
                 ))}
             </div>

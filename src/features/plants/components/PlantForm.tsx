@@ -177,7 +177,7 @@ export const PlantForm: React.FC<PlantFormProps> = ({ initialData, isEditing, on
             <input
               id="wateringFrequency"
               type="number"
-              min="1"
+              min="0"
               required
               placeholder="ej. Cada 7 días (escribe 7)"
               className="bg-stone-100 rounded-xl px-4 py-3 text-stone-900 placeholder:text-stone-400 outline-none focus:ring-2 focus:ring-mountain-meadow-500 transition-all"
